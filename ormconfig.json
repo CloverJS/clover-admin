@@ -1,0 +1,11 @@
+{
+  "type": "mssql",
+  "host": "119.45.102.83",
+  "port": 1433,
+  "username": "sa",
+  "password": "520Pyf147258369",
+  "database": "dmt",
+  "entities": ["dist/feature/**/entities/*.entity{.ts,.js}"],
+  "synchronize": false,
+  "autoLoadEntities": true
+}
