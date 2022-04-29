@@ -4,8 +4,15 @@
   "port": 1433,
   "username": "sa",
   "password": "520Pyf147258369",
-  "database": "dmt",
+  "database": "nest_test",
   "entities": ["dist/feature/**/entities/*.entity{.ts,.js}"],
   "synchronize": false,
-  "autoLoadEntities": true
+  "autoLoadEntities": true,
+  "options": {
+    "encrypt": false,
+    "trustServerCertificate": true,
+    "cryptoCredentialsDetails": {
+        "minVersion": "TLSv1"
+    }
+  }
 }

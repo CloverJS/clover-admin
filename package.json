@@ -32,6 +32,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "dayjs": "^1.11.1",
+    "multer": "^1.4.4",
+    "mysql2": "^2.3.3",
     "mssql": "^8.1.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",

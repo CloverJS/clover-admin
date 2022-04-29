@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
-import dayjs from 'dayjs';
-// import * as dayjs from 'dayjs'; // 如果dayjs导入报错, 则使用这个导入方式
+// import dayjs from 'dayjs';
+import * as dayjs from 'dayjs'; // 如果dayjs导入报错, 则使用这个导入方式
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { FileController } from './file.controller';
@@ -11,7 +11,7 @@ import { FileService } from './file.service';
   imports: [
     MulterModule.register({
       storage: diskStorage({
-        //自定义路径
+        //自定义文件存储路径
         destination: `./client/fileUpload/${dayjs().format('YYYY-MM-DD')}`,
         filename: (req, file, cb) => {
           // 自定义文件名

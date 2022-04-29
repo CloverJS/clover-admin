@@ -9,6 +9,4 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-
-  //TODO 原本的login和register应移到auth 的controller层
 }

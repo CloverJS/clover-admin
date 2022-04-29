@@ -29,6 +29,7 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   jest: ^27.2.5
   mssql: ^8.1.0
+  multer: ^1.4.4
   passport: ^0.5.2
   passport-jwt: ^4.0.0
   passport-local: ^1.0.0
@@ -58,6 +59,7 @@ dependencies:
   class-validator: registry.npmmirror.com/class-validator/0.13.2
   dayjs: registry.npmmirror.com/dayjs/1.11.1
   mssql: registry.npmmirror.com/mssql/8.1.0
+  multer: registry.npmmirror.com/multer/1.4.4
   passport: registry.npmmirror.com/passport/0.5.2
   passport-jwt: registry.npmmirror.com/passport-jwt/4.0.0
   passport-local: registry.npmmirror.com/passport-local/1.0.0
@@ -1799,7 +1801,7 @@ packages:
   registry.npmmirror.com/@types/superagent/4.1.15:
     resolution: {integrity: sha512-iiXaOL2wSbnSY4qg0mFPWJHL9iwyEsoNYwaHF2w58/fsVAQJlj+KUfFAFZu+nzbz+b7dUprJEAc+O9vhHHhQTA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/superagent/-/superagent-4.1.14.tgz}
     name: '@types/superagent'
-    version: 4.1.15
+    version: 4.1.14
     deprecated: '[WARNING] Use 4.1.14 instead of 4.1.15, reason: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/58445'
     dependencies:
       '@types/cookiejar': registry.npmmirror.com/@types/cookiejar/2.1.2

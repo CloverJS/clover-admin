@@ -4,6 +4,7 @@
 
 import { IsMobilePhone, IsNotEmpty } from 'class-validator';
 import { Role } from 'src/common/enums/role.enum';
+import { Photo } from 'src/feature/photo/entities/photo.entity';
 import {
   Column,
   CreateDateColumn,
@@ -14,7 +15,6 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { Photo } from '../photo/photo.entity';
 
 @Entity({
   name: 'user', // 数据库表名, 默认为类名
@@ -25,7 +25,7 @@ import { Photo } from '../photo/photo.entity';
   },
 })
 export class User {
-  // 创建一个自增的主键
+  // 创建一个自增的主键  -- @PrimaryColumn用于创建主键
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -79,6 +79,13 @@ export class User {
     default: Role.STUDENT,
   })
   role: Role;
+
+  // mssql不支持枚举
+  // @Column({
+  //   type: 'varchar',
+  //   default: Role.STUDENT,
+  // })
+  // role: Role;
 
   // 使用@Generated装饰器创建具有生成值的列
   @Column()

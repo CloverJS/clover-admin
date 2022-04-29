@@ -10,14 +10,14 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorsInterceptor } from './core/interceptors/errors.interceptor';
 import { FileModule } from './feature/file/file.module';
 import { AuthModule } from './core/auth/auth.module';
-import { PhotoModule } from './photo/photo.module';
+import { PhotoModule } from './feature/photo/photo.module';
 
 @Module({
   imports: [
     // 将 TypeOrmModule 导入AppModule,并使用ormconfig.json中的配置
     TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({
-      // 配置静态服务目录---访问: http://localhost:3000/fileUpload/2022-04-27/xxx.png
+      // 配置静态服务目录---访问: http://localhost:3000/client目录内/xxx.png
       rootPath: join(__dirname, '..', 'client'),
     }),
     UserModule,
