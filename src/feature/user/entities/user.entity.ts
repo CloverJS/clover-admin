@@ -72,20 +72,20 @@ export class User {
   @IsNotEmpty()
   password: string;
 
-  // mysql支持枚举
-  @Column({
-    type: 'enum',
-    enum: Role,
-    default: Role.STUDENT,
-  })
-  role: Role;
-
-  // mssql不支持枚举
+  //TODO mysql支持枚举
   // @Column({
-  //   type: 'varchar',
+  //   type: 'enum',
+  //   enum: Role,
   //   default: Role.STUDENT,
   // })
   // role: Role;
+
+  //TODO mssql不支持枚举
+  @Column({
+    type: 'varchar',
+    default: Role.STUDENT,
+  })
+  role: Role;
 
   // 使用@Generated装饰器创建具有生成值的列
   @Column()

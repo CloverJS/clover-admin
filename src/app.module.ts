@@ -14,7 +14,13 @@ import { PhotoModule } from './feature/photo/photo.module';
 
 @Module({
   imports: [
-    // 将 TypeOrmModule 导入AppModule,并使用ormconfig.json中的配置
+    /**
+     * 将 TypeOrmModule 导入AppModule,并使用ormconfig.json中的配置
+     * 其中entities - 要加载并用于此连接的实体。接受要加载的实体类和目录路径
+     * synchronize - 指示是否在每次应用程序启动时自动创建数据库架构,生成环境下请务必设为false
+     *  - 使用mssql如果遇到项目启动表未创建, 可以设置为true, 在表创建后再设为false
+     * 设置autoLoadEntities为true即可自动载入实体---每个通过forFeature()注册的实体都会自动添加到配置对象的entities数组中
+     */
     TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({
       // 配置静态服务目录---访问: http://localhost:3000/client目录内/xxx.png
