@@ -81,6 +81,12 @@ Nest文档：https://docs.nestjs.cn/8/techniques?id=%e6%95%b0%e6%8d%ae%e5%ba%93
 [class-validator](https://github.com/typestack/class-validator#validation-messages)
 
 Nest文档：https://docs.nestjs.cn/8/techniques?id=%e9%aa%8c%e8%af%81
+
+### 静态服务
+所有需要静态访问的静态资源文件均可放在根目录的client(没有则需创建)目录下
+
+### 文件上传
+文件上传后将会保存在client/fileUpload目录下
 ## License
 
 Nest is [MIT licensed](LICENSE).
