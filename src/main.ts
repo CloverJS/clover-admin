@@ -26,5 +26,5 @@ async function bootstrap() {
 }
 bootstrap();
 /**
- * 使用mssql如果遇到ssl问题, 则需要添加ormconfig.json中的options配置(现已默认添加, 但这使用ssl的低版本,可能不安全)
+ * 使用mssql如果遇到ssl问题, 则需要添加ormconfig.json中的options配置(现已默认添加, 但这将使用ssl的低版本,可能不安全)
  */
