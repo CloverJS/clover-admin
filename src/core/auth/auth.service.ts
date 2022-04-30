@@ -31,6 +31,7 @@ export class AuthService {
 
   // 注册
   async register(createUserDto: CreateUserDto): Promise<void> {
-    return await this.userService.createOne(createUserDto);
+    const { role, ...createUser } = createUserDto; // 不允许直接注册高级角色
+    return await this.userService.createOne(createUser);
   }
 }

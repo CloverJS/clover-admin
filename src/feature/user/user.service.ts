@@ -35,6 +35,11 @@ export class UserService {
     return await this.usersRepository.findOneBy({
       phone,
     });
+    // 注意: typeorm生成的sql语句中, 可能不支持sqlserver2008, 因此在必要时需要使用queryBuilder来生成sql语句
+    // return await this.usersRepository
+    //   .createQueryBuilder('user')
+    //   .where('user.phone = :phone', { phone })
+    //   .getOne();
   }
 
   async updateOne(id: number, updateUseDto: UpdateUserDto): Promise<void> {
@@ -43,6 +48,11 @@ export class UserService {
 
   async createOne(createUserDto: CreateUserDto): Promise<void> {
     const existing = await this.findOneByPhone(createUserDto.phone);
+    // 注意: typeorm生成的sql语句中, 可能不支持sqlserver2008, 因此在必要时需要使用queryBuilder来生成sql语句
+    // const existing = await this.usersRepository
+    //   .createQueryBuilder('user')
+    //   .where('user.phone = :phone', { phone: createUserDto.phone })
+    //   .getOne();
     if (existing) throw new HttpException('用户已存在', 409);
     createUserDto.password = this.cryptoUtil.encryptPassword(
       createUserDto.password,

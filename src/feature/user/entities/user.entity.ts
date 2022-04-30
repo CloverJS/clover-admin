@@ -31,11 +31,13 @@ export class User {
 
   // 设置列类型
   @Column({ type: 'varchar', length: 32, default: 'user' })
+  @IsNotEmpty()
   firstName: string;
 
   @Column({
     default: '',
   })
+  @IsNotEmpty()
   lastName: string;
 
   // 设置列默认值
@@ -55,7 +57,9 @@ export class User {
     comment: '用户手机号', // 数据库列备注
   })
   // 值校验: 是否是手机号
-  @IsMobilePhone('zh-CN')
+  @IsMobilePhone('zh-CN', {
+    message: '手机号格式不正确', // 自定义验证失败信息
+  })
   phone: string;
 
   @Column({
