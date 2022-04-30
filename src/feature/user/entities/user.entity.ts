@@ -31,7 +31,7 @@ export class User {
 
   // 设置列类型
   @Column({ type: 'varchar', length: 32, default: 'user' })
-  @IsNotEmpty()
+  @IsNotEmpty() // createUserDto是从User映射而来, 如果为验证开启了自动过滤非白名单字段, 这里不设置不为空在createUserDto中此字段会被忽略
   firstName: string;
 
   @Column({
@@ -77,19 +77,19 @@ export class User {
   password: string;
 
   //TODO mysql支持枚举
-  // @Column({
-  //   type: 'enum',
-  //   enum: Role,
-  //   default: Role.STUDENT,
-  // })
-  // role: Role;
-
-  //TODO mssql不支持枚举
   @Column({
-    type: 'varchar',
+    type: 'enum',
+    enum: Role,
     default: Role.STUDENT,
   })
   role: Role;
+
+  //TODO mssql不支持枚举
+  // @Column({
+  //   type: 'varchar',
+  //   default: Role.STUDENT,
+  // })
+  // role: Role;
 
   // 使用@Generated装饰器创建具有生成值的列
   @Column()

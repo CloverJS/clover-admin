@@ -15,6 +15,7 @@ import { Result } from 'src/common/interfaces/result.interface';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -26,7 +27,7 @@ export class UserController {
    * 查询所有用户
    */
   @Get('/')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN) // 限定此接口仅对ADMIN开放
   async getAllUsers(): Promise<Result> {
     const data = await this.userService.findAll();
     return { code: 200, message: '获取成功', data };
@@ -77,11 +78,10 @@ export class UserController {
   /**
    * 批量新增用户
    */
+  //TODO bug
   @Post('/many')
-  async createMany(
-    @Body() createUserDtos: Array<CreateUserDto>,
-  ): Promise<Result> {
-    await this.userService.createMany(createUserDtos);
+  async createMany(@Body() users: Array<User>): Promise<Result> {
+    await this.userService.createMany(users);
     return { code: 200, message: '创建成功' };
   }
 }

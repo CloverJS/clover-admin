@@ -1,18 +1,11 @@
 {
-  "type": "mssql",
+  "type": "mysql",
   "host": "119.45.102.83",
-  "port": 1433,
-  "username": "sa",
-  "password": "520Pyf147258369",
+  "port": 3306,
+  "username": "root",
+  "password": "wzc520pyf",
   "database": "nest_test",
   "entities": ["dist/feature/**/entities/*.entity{.ts,.js}"],
-  "synchronize": false,
-  "autoLoadEntities": true,
-  "options": {
-    "encrypt": false,
-    "trustServerCertificate": true,
-    "cryptoCredentialsDetails": {
-        "minVersion": "TLSv1"
-    }
-  }
+  "synchronize": true,
+  "autoLoadEntities": true
 }

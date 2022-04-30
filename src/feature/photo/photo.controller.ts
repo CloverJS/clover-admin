@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -39,7 +40,7 @@ export class PhotoController {
   }
 
   /**
-   * 查询指定用户的所有photo
+   * 查询当前用户的所有photo
    */
   @Get()
   @UseGuards(AuthGuard('jwt'))
@@ -55,7 +56,7 @@ export class PhotoController {
   @UseGuards(AuthGuard('jwt'))
   async updateContent(
     @Req() req: any,
-    @Body() updateContent: string,
+    @Body('content') updateContent: string,
     @Param('id') id: number,
   ): Promise<Result> {
     await this.photoService.updateContent(id, updateContent);
@@ -65,15 +66,16 @@ export class PhotoController {
   /**
    * 更加复杂的例子
    */
-  @Get()
+  @Get('common')
   @UseGuards(AuthGuard('jwt'))
   async findAllPhotosAndLimit(
     @Req() req: any,
-    @Param('title') title: string,
-    @Param('offset') offset: number,
-    @Param('limit') limit: number,
+    @Query('title') title: string,
+    @Query('offset') offset: number,
+    @Query('limit') limit: number,
     // @Param() params: { title?: string; offset?: number; limit?: number },
   ): Promise<Result> {
+    console.log(req.user.id, title, offset, limit);
     const photos = await this.photoService.findAllPhotosAndLimit(
       req.user.id,
       title,

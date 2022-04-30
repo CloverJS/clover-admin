@@ -43,6 +43,9 @@ export class UserService {
   }
 
   async updateOne(id: number, updateUseDto: UpdateUserDto): Promise<void> {
+    updateUseDto.password = this.cryptoUtil.encryptPassword(
+      updateUseDto.password,
+    ); // 密码加密
     await this.usersRepository.update(id, updateUseDto);
   }
 
@@ -66,7 +69,7 @@ export class UserService {
 
   // 不推荐使用装饰器来控制事务(@Transaction()和@TransactionManager())
   // 创建一个事务
-  async createMany(createUserDtos: Array<CreateUserDto>) {
+  async createMany(users: Array<User>) {
     const queryRunner = this.connection.createQueryRunner();
 
     // 获取连接
@@ -76,10 +79,11 @@ export class UserService {
     try {
       // 执行一些操作
       const createTasks = [];
-      for (const createUserDto of createUserDtos) {
-        createTasks.push(queryRunner.manager.save(createUserDto));
+      for (const user of users) {
+        // createTasks.push(queryRunner.manager.save(user));
+        await queryRunner.manager.save(user);
       }
-      await Promise.all(createTasks);
+      // await Promise.all(createTasks);
       // await queryRunner.manager.save(createUserDtos[0]);
       // await queryRunner.manager.save(createUserDtos[1]);
 
@@ -94,14 +98,14 @@ export class UserService {
     }
   }
   // 或者直接使用一个Connection对象的回调函数的风格的transaction方法
-  async createMany2(createUserDtos: Array<CreateUserDto>) {
+  async createMany2(users: Array<User>) {
     await this.connection.transaction(async (manager) => {
       /**
        * 我们不建议在循环中使用await,而是使用Promise.all(),让异步并发执行以提高效率
        */
       const createTasks = [];
-      for (const createUserDto of createUserDtos) {
-        createTasks.push(manager.save(createUserDto));
+      for (const user of users) {
+        createTasks.push(manager.save(user));
       }
       await Promise.all(createTasks);
     });

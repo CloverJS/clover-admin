@@ -26,5 +26,15 @@ async function bootstrap() {
 }
 bootstrap();
 /**
- * 使用mssql如果遇到ssl问题, 则需要添加ormconfig.json中的options配置(现已默认添加, 但这将使用ssl的低版本,可能不安全)
+ * 使用mssql如果遇到ssl问题, 则需要在ormconfig.json中添加如下options配置(现已默认添加, 但这将使用ssl的低版本,可能不安全)
  */
+// {
+//   //...其他配置
+//   "options": {
+//     "encrypt": false,
+//     "trustServerCertificate": true,
+//     "cryptoCredentialsDetails": {
+//         "minVersion": "TLSv1"
+//     }
+//   }
+// }
