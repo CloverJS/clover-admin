@@ -7,7 +7,7 @@
 
 ## Description
 
-CloverAdmin是一个Nest后台后端解决方案。它借助强大的[Nest](https://github.com/nestjs/nest)和社区快速、轻巧地构建Node服务端应用程序。目前已集成权限验证、使用Typeorm的MySql与SqlServer方案、数据验证、文件上传、静态服务等功能。它提供了一个完整的RestFul风格的接口示例。
+CloverAdmin是一个Nest后台后端解决方案。它借助强大的[Nest](https://github.com/nestjs/nest)和社区快速、轻巧地构建更优雅的Node服务端应用程序。目前已集成权限验证、使用Typeorm的MySql与SqlServer方案、数据验证、文件上传、静态服务等功能。它提供了一个完整的RestFul风格的接口示例。
 
 `node：14.19.0`
 `pnpm：6.32.3`
