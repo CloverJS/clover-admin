@@ -25,6 +25,10 @@ import {
   },
 })
 export class User {
+  // 构造函数, 用户构建实体
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
   // 创建一个自增的主键  -- @PrimaryColumn用于创建主键
   @PrimaryGeneratedColumn()
   id: number;

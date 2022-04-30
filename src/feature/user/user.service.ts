@@ -80,12 +80,11 @@ export class UserService {
       // 执行一些操作
       const createTasks = [];
       for (const user of users) {
-        // createTasks.push(queryRunner.manager.save(user));
-        await queryRunner.manager.save(user);
+        user.password = this.cryptoUtil.encryptPassword(user.password); // 密码加密
+        // 事务中需要传入实体而非对象
+        createTasks.push(queryRunner.manager.save(new User(user)));
       }
-      // await Promise.all(createTasks);
-      // await queryRunner.manager.save(createUserDtos[0]);
-      // await queryRunner.manager.save(createUserDtos[1]);
+      await Promise.all(createTasks);
 
       // 提交事务
       await queryRunner.commitTransaction();
@@ -100,12 +99,14 @@ export class UserService {
   // 或者直接使用一个Connection对象的回调函数的风格的transaction方法
   async createMany2(users: Array<User>) {
     await this.connection.transaction(async (manager) => {
+      // 想要在事务运行的所有操作都必须在这个回调函数里
       /**
        * 我们不建议在循环中使用await,而是使用Promise.all(),让异步并发执行以提高效率
        */
       const createTasks = [];
       for (const user of users) {
-        createTasks.push(manager.save(user));
+        user.password = this.cryptoUtil.encryptPassword(user.password); // 密码加密
+        createTasks.push(manager.save(new User(user)));
       }
       await Promise.all(createTasks);
     });

@@ -78,7 +78,6 @@ export class UserController {
   /**
    * 批量新增用户
    */
-  //TODO bug
   @Post('/many')
   async createMany(@Body() users: Array<User>): Promise<Result> {
     await this.userService.createMany(users);

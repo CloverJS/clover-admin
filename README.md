@@ -1,31 +1,16 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+<p align="center">
+  <a href="https://docs.nestjs.cn/" target="blank">中文官网</a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+CloverAdmin是一个Nest后台后端解决方案。它借助强大的[Nest](https://github.com/nestjs/nest)和社区快速、轻巧地构建Node服务端应用程序。目前已集成权限验证、使用Typeorm的MySql与SqlServer方案、数据验证、文件上传、静态服务等功能。它提供了一个完整的RestFul风格的接口示例。
 
+`node：14.19.0`
+`pnpm：6.32.3`
 ## Installation
 
 ```bash
@@ -45,7 +30,57 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
+## Start 
+建设中。。。
 
+### 数据库
+采用[Typeorm](https://github.com/typeorm/typeorm)
+文档地址: https://typeorm.bootcss.com/
+
+Nest文档：https://docs.nestjs.cn/8/techniques?id=%e6%95%b0%e6%8d%ae%e5%ba%93
+#### Mysql
+```
+// ormconfig.json
+{
+  "type": "mysql",
+  "host": "数据库ip地址",
+  "port": 数据库端口号,
+  "username": "xxxx",
+  "password": "xxxxxx",
+  "database": "数据库名",
+  "entities": ["dist/feature/**/entities/*.entity{.ts,.js}"],
+  "synchronize": true,
+  "autoLoadEntities": true
+}
+```
+#### SqlServer
+```
+// ormconfig.json
+{
+  "type": "mssql",
+  "host": "数据库ip地址",
+  "port": 数据库端口号,
+  "username": "xxxx",
+  "password": "xxxxxx",
+  "database": "数据库名",
+  "entities": ["dist/feature/**/entities/*.entity{.ts,.js}"],
+  "synchronize": true,
+  "autoLoadEntities": true,
+  "options": { # mssql如果出现ssl问题, 则需要添加此options
+    "encrypt": false,
+    "trustServerCertificate": true,
+    "cryptoCredentialsDetails": {
+      "minVersion": "TLSv1"
+    }
+  }
+}
+```
+注意：Typeorm生成的sql语句可能不支持SqlServer2008，因此可能需要使用QueryBuilder来拼接sql。
+
+### 校验
+[class-validator](https://github.com/typestack/class-validator#validation-messages)
+
+Nest文档：https://docs.nestjs.cn/8/techniques?id=%e9%aa%8c%e8%af%81
 ## License
 
 Nest is [MIT licensed](LICENSE).
