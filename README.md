@@ -36,6 +36,10 @@ $ pnpm run start:prod
 
 建设中。。。
 
+### 目录结构
+
+
+
 ### 跨域
 
 仅需在mian.ts中添加如下配置:
@@ -266,7 +270,194 @@ export class User {
 
 ### TypeORM
 
+* 实体
 
+  实体推荐在相应模块目录下, 创建entities目录, 并创建实体, 命名方式推荐为: xxx.entity.ts
+
+  实体需加`@entity`注解
+
+  ```ts
+  @Entity({
+    name: 'questions', // 存储进数据库时的表名
+    orderBy: { // find等查询方法返回数据时的默认排序方式
+      id: 'ASC', // 依据id正序排序
+    },
+  })
+  export class Question {}
+  ```
+
+  建议为实体创建构造函数
+
+  ```ts
+  export class User {
+    // 构造函数, 用户构建实体
+    constructor(partial: Partial<User>) {
+      Object.assign(this, partial);
+    }
+  }
+  ```
+
+  实体成员在运行时将被创建为数据库表的列, 相关注解如下:
+
+  * `@PrimaryGeneratedColumn()`  自增主键
+  * `@Column` 普通列
+  * `@CreateDateColumn`  特殊列，自动为实体插入日期。无需设置此列，该值将自动设置
+  * `@UpdateDateColumn`  特殊列，在每次调用实体管理器或存储库的save时，自动更新实体日期。无需设置此列，该值将自动设置。
+  * `@VersionColumn`   特殊列，在每次调用实体管理器或存储库的save时自动增长实体版本（增量编号）。无需设置此列，该值将自动设置。
+
+  每个Column都有额外的options可配置, 常用如下: 
+
+  ```ts
+  @Column({
+      type: 'varchar', // 列类型
+      name: 'phone', // 数据库表中的列名(默认为属性名)
+      length: 16, // 列长度
+      nullable: false, // 列可否为空(默认false)
+      select: true, // 查询时是否隐藏此列,设为false则列数据不会显示标准查询(默认true)
+      primary: false, // 标记为主列(作用等同于@PrimaryColumn)
+      unique: false, // 将列标记为唯一列(创建唯一约束)
+      comment: '手机号', // 数据库列备注
+  })
+  ```
+
+  实体间的关系也是依据注解实现, 见[关系 | TypeORM 中文文档 | TypeORM 中文网 (bootcss.com)](https://typeorm.bootcss.com/relations)
+
+* 查询所有用户
+
+  ```ts
+  this.usersRepository.find();
+  ```
+
+* 查询指定id的用户
+
+  ```ts
+  this.usersRepository.findOneBy({
+        id,
+  });
+  ```
+
+* 查询指定学生某张试卷的成绩
+
+  ```ts
+  this.gradeRecordRepository.findOneBy({
+        examPaper: { id: submitScore.examPaperId },
+        user: { id: user.id },
+  });
+  ```
+
+* 查询指定学生的所有错题(这里错题记录和题目是两个实体, 他们之间关系为多对一)
+
+  ```ts
+  this.wrongQuestionRecordRepository.find({
+        where: { user: { id: user.id } },
+        relations: ['question'], // 开启查询级联, 同时将对应题目信息也返回
+  });
+  ```
+
+* 查询指定id的题目信息(题目信息需要包含一个关键字实体, 他们之间关系为一对多)
+
+  ```ts
+  this.questionsRepository.findOne({
+        where: {
+          id,
+          actionRecords: {
+            mark: Mark.NORMAL,
+          },
+        },
+        relations: [
+          'words',
+        ],
+  });
+  ```
+
+* 高级查询
+
+  ```ts
+  this.examPaperRepository
+        .createQueryBuilder('exam_paper') // 创建queryBuilder
+        .leftJoinAndSelect('exam_paper.scorePapers', 'score_paper') // 左连表, 第一个参数为要加载的关系, 第二个字段是为此关系的表分配的别名
+        .leftJoinAndSelect('exam_paper.creator', 'creator') // 可以左连任意多个表
+        .leftJoinAndSelect('exam_paper.modifier', 'modifier')
+        .leftJoinAndSelect('score_paper.question', 'question')
+        .leftJoinAndSelect('question.selectQuestion', 'select_question')
+        .leftJoinAndSelect('question.judgmentQuestion', 'judgement_question')
+        .leftJoinAndSelect('question.narrateQuestion', 'narrate_question')
+        .where('exam_paper.id = :id', { id }) // 查询条件
+        .andWhere('exam_paper.actionRecords.mark = :mark', { mark: Mark.NORMAL }) // and 查询条件, 另一种是 or
+        .select([
+          // 自定义返回字段
+          'exam_paper.id',
+          'exam_paper.name',
+          'exam_paper.description',
+          'exam_paper.type',
+          'exam_paper.status',
+          'exam_paper.actionRecords.updateTime',
+          'score_paper.id',
+          'score_paper.score',
+          'question.id',
+          'select_question.id',
+          'judgement_question.id',
+          'narrate_question.id',
+          'creator.id',
+          'creator.username',
+          'modifier.id',
+          'modifier.username',
+        ])
+        .getOne();
+  ```
+
+* 在创建实体Entity时, 如果为password字段设置了`select:false`
+
+  ```ts
+  @Column({select:false})
+  password: string;
+  ```
+
+  那么一般的查询则不会获取到password字段, 需要使用addSelect: 
+
+  ```ts
+  this.usersRepository
+        .createQueryBuilder('user')
+        .addSelect('user.password') // 增加查询字段(密码)
+        .where('user.phone = :phone', { phone })
+        .getOne();
+  ```
+
+* 更新指定id的用户新
+
+  ```ts
+  this.usersRepository.update(id, user);
+  ```
+
+* 创建一个新用户
+
+  ```ts
+  this.usersRepository.save(user);
+  ```
+
+* 移除指定id的用户
+
+  ```ts
+  this.usersRepository.delete(id);
+  ```
+
+* 执行一个事务
+
+  ```ts
+  await this.connection.transaction(async (manager) => {
+        // 想要在事务运行的所有操作都必须在这个回调函数里
+        /**
+         * 我们不建议在循环中使用await,而是使用Promise.all(),让异步并发执行以提高效率
+         */
+        const createTasks = [];
+        for (const user of users) {
+          createTasks.push(manager.save(new User(user)));
+        }
+        await Promise.all(createTasks);
+  });
+  ```
+
+  
 
 ## License
 
