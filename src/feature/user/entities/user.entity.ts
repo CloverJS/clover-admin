@@ -3,17 +3,15 @@
  */
 
 import { IsMobilePhone, IsNotEmpty } from 'class-validator';
+import { ActionWithUser } from 'src/common/entities/action-with-user.entity';
 import { Role } from 'src/common/enums/role.enum';
 import { Photo } from 'src/feature/photo/entities/photo.entity';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Generated,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  VersionColumn,
 } from 'typeorm';
 
 @Entity({
@@ -100,21 +98,13 @@ export class User {
   @Generated('uuid') // uuid值将自动生成并存储到数据库中。
   uuid: string;
 
+  // 使用嵌入式实体
+  @Column((type) => ActionWithUser)
+  action: ActionWithUser;
+
   /**
    * 定义关系: 一个user可以有多个photo,那么就是一对多的关系
    */
   @OneToMany((type) => Photo, (photo) => photo.user)
   photos: Array<Photo>;
-
-  // 一个特殊列，自动为实体插入日期。无需设置此列，该值将自动设置
-  @CreateDateColumn()
-  createTime: Date;
-
-  // 一个特殊列，在每次调用实体管理器或存储库的save时，自动更新实体日期。无需设置此列，该值将自动设置。
-  @UpdateDateColumn()
-  updateTime: Date;
-
-  // 一个特殊列，在每次调用实体管理器或存储库的save时自动增长实体版本（增量编号）。无需设置此列，该值将自动设置。
-  @VersionColumn()
-  version: any;
 }
