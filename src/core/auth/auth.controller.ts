@@ -10,6 +10,7 @@ import {
 import { Result } from 'src/common/interfaces/result.interface';
 import { CreateUserDto } from 'src/feature/user/dto/create-user.dto';
 import { AuthService } from './auth.service';
+import { LoginedDto } from './dto/logined.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
@@ -18,9 +19,9 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req: any) {
+  async login(@Request() req: any): Promise<Result<LoginedDto>> {
     const token = await this.authService.login(req.user);
-    return { code: 200, message: '登录成功', data: { token } };
+    return { code: 200, message: '登录成功', data: { list: [token] } };
   }
 
   //TODO 目前验证失败的返回稍有问题, 原因应该是自定义的错误拦截器和验证器抛出错误的兼容问题
@@ -34,7 +35,7 @@ export class AuthController {
     // 如果需要验证数组,请使用ParseArrayPipe
     // @Body(new ParseArrayPipe({ items: CreateUserDto }))
     // createUserDtos: CreateUserDto[],
-  ): Promise<Result> {
+  ): Promise<Result<void>> {
     await this.authService.register(createUserDto);
     return { code: 200, message: '注册成功' };
   }

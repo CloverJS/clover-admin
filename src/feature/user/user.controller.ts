@@ -7,12 +7,14 @@ import {
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { RolesGuard } from 'src/common/guard/roles.guard';
 import { Result } from 'src/common/interfaces/result.interface';
 import { JwtAuthGuard } from 'src/core/auth/guards/jwt-auth.guard';
+import { DatetimeInterceptor } from 'src/core/interceptors/datetime.interceptor';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -28,6 +30,7 @@ export class UserController {
    */
   @Get('/')
   @Roles(Role.ADMIN) // 限定此接口仅对ADMIN开放
+  @UseInterceptors(DatetimeInterceptor) // 格式化返回值中的时间
   async getAllUsers(): Promise<Result<User>> {
     const users = await this.userService.findAll();
     return { code: 200, message: '获取成功', data: { list: users } };

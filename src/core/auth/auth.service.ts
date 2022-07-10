@@ -2,7 +2,9 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CryptoUtil } from 'src/common/utils/crypto.util';
 import { CreateUserDto } from 'src/feature/user/dto/create-user.dto';
+import { User } from 'src/feature/user/entities/user.entity';
 import { UserService } from 'src/feature/user/user.service';
+import { LoginedDto } from './dto/logined.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +24,7 @@ export class AuthService {
     return result;
   }
 
-  async login(user: any) {
+  async login(user: Pick<User, 'id' | 'phone' | 'role'>): Promise<LoginedDto> {
     const payload = { phone: user.phone, sub: user.id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
