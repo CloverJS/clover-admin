@@ -11,9 +11,20 @@ import { ErrorsInterceptor } from './core/interceptors/errors.interceptor';
 import { FileModule } from './feature/file/file.module';
 import { AuthModule } from './core/auth/auth.module';
 import { PhotoModule } from './feature/photo/photo.module';
+import appConfig from './config/app.config';
+import { ConfigModule } from '@nestjs/config';
+import { ConfigEnum } from './config/config.enum';
 
 @Module({
   imports: [
+    /** 导入config模块 */
+    ConfigModule.forRoot({
+      envFilePath: `./src/config/${
+        ConfigEnum[process.env?.NODE_ENV ?? 'development']
+      }.env`, // 自定义env文件路径
+      load: [appConfig], // 自定义配置文件
+      isGlobal: true, // 设为全局模块
+    }),
     /**
      * 将 TypeOrmModule 导入AppModule,并使用ormconfig.json中的配置
      * 其中entities - 要加载并用于此连接的实体。接受要加载的实体类和目录路径

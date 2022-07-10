@@ -14,7 +14,11 @@ CloverAdmin是一个Nest后台后端解决方案。它借助强大的[Nest](http
 `pnpm：6.32.3`
 
 ## Installation
-
+如果事先未安装Nest, 则需要先安装Nest
+```bash
+$ npm i -g @nestjs/cli
+```
+安装项目依赖
 ```bash
 $ pnpm install
 ```

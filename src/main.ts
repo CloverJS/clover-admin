@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { logger } from './core/middleware/logger.middleware';
@@ -8,7 +8,12 @@ async function bootstrap() {
     logger: ['error', 'warn', 'debug', 'log', 'verbose'], // 日志级别
     cors: true, // 跨域
   });
-  app.setGlobalPrefix('api/v1'); // 全局路由前缀
+  app.setGlobalPrefix('api'); // 全局路由前缀
+  app.enableVersioning({
+    // URI版本控制
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  }); // 默认版本为v1, 即api/v1/xxx
   app.use(logger); // 全局日志中间件
   app.useGlobalPipes(
     new ValidationPipe({
@@ -21,8 +26,9 @@ async function bootstrap() {
   // 如果遇到请求实体太大的问题, 可揭开下面的注释
   // app.use(json({ limit: '50mb' }));
   // app.use(urlencoded({ limit: '50mb', extended: true }));
-  await app.listen(3000);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  await app.listen(process.env?.APP_PORT ?? 3000);
+  process.env.URL = await app.getUrl();
+  console.log(`Application is running on: ${process.env.URL}`);
 }
 bootstrap();
 /**
