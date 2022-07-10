@@ -16,7 +16,7 @@ export class FileController {
   async UploadedFile(
     @Body() body: UpLoadFileDto, // 如果需要获取body里除文件外的其他数据
     @UploadedFile() file: Express.Multer.File, // 获取上传的文件
-  ): Promise<Result> {
-    return { code: 200, message: '上传成功', data: file };
+  ): Promise<Result<Express.Multer.File>> {
+    return { code: 200, message: '上传成功', data: { list: [file] } };
   }
 }

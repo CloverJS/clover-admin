@@ -28,9 +28,9 @@ export class UserController {
    */
   @Get('/')
   @Roles(Role.ADMIN) // 限定此接口仅对ADMIN开放
-  async getAllUsers(): Promise<Result> {
-    const data = await this.userService.findAll();
-    return { code: 200, message: '获取成功', data };
+  async getAllUsers(): Promise<Result<User>> {
+    const users = await this.userService.findAll();
+    return { code: 200, message: '获取成功', data: { list: users } };
   }
 
   /**
@@ -40,7 +40,7 @@ export class UserController {
   async createOne(
     // 默认201: 已创建。成功请求并创建了新的资源
     @Body() createUserDto: CreateUserDto,
-  ): Promise<Result> {
+  ): Promise<Result<void>> {
     await this.userService.createOne(createUserDto);
     return { code: 200, message: '创建成功' };
   }
@@ -49,9 +49,9 @@ export class UserController {
    * 查询指定用户
    */
   @Get('/:id')
-  async getOne(@Param('id') id: number): Promise<Result> {
-    const data = await this.userService.findOne(id);
-    return { code: 200, message: '获取成功', data };
+  async getOne(@Param('id') id: number): Promise<Result<User>> {
+    const user = await this.userService.findOne(id);
+    return { code: 200, message: '获取成功', data: { list: [user] } };
   }
 
   /**
@@ -61,7 +61,7 @@ export class UserController {
   async updateOne(
     @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<Result> {
+  ): Promise<Result<void>> {
     await this.userService.updateOne(id, updateUserDto);
     return { code: 200, message: '更新成功' };
   }
@@ -70,7 +70,7 @@ export class UserController {
    * 删除指定用户
    */
   @Delete('/:id')
-  async removeOne(@Param('id') id: number): Promise<Result> {
+  async removeOne(@Param('id') id: number): Promise<Result<void>> {
     await this.userService.removeOne(id);
     return { code: 200, message: '删除成功' };
   }
@@ -79,7 +79,7 @@ export class UserController {
    * 批量新增用户
    */
   @Post('/many')
-  async createMany(@Body() users: Array<User>): Promise<Result> {
+  async createMany(@Body() users: Array<User>): Promise<Result<void>> {
     await this.userService.createMany(users);
     return { code: 200, message: '创建成功' };
   }

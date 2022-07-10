@@ -55,13 +55,118 @@ async function bootstrap() {
 });
 ```
 
+### 路由
+
+Nest路由由如下几部分组成： 
+
+`域名(或 IP:端口)` /`全局路由前缀(如果有)`/`api版本(如果有)`/`controller层标识`/`路由层标识`
+
+一个路由的行为，Nest对其进行了划分：
+
+* controller主要负责接收接口传来的参数和返回数据
+* service主要负责接口逻辑处理，如数据库操作
+* pipe管道则主要负责对接口传来的数据进行验证和转换
+* interceptor拦截器则主要是为接口处理绑定额外的逻辑，比如在接口返回值前进行额外处理（对日期进行格式化等）
+* guard守卫则是为某些需要特殊身份才能访问的接口绑定鉴权行为
+
 ### 全局路由前缀
 
-仅需在mian.ts中添加如下配置:
+仅需在main.ts中添加如下配置:
 
 ```ts
-app.setGlobalPrefix('api/v1'); // 全局路由前缀
+app.setGlobalPrefix('api'); // 全局路由前缀
 ```
+
+### URI版本控制
+
+在main.ts中添加如下配置: 
+
+```ts
+app.enableVersioning({
+    // URI版本控制
+    type: VersioningType.URI,
+    defaultVersion: '1', // 为所有URI指定默认版本
+}); // 默认版本为v1, 即api/v1/xxx
+```
+
+如果需要手动指定控制器版本, 参照如下: 
+
+```ts
+@Controller({
+  version: '2',
+})
+export class CatsControllerV1 {
+  @Get('cats')
+  findAll(): string {
+    return 'This action returns all cats for version 1';
+  }
+}
+```
+
+同样, 路由也是如此: 
+
+```ts
+@Controller()
+export class CatsController {
+  @Version('1')
+  @Get('cats')
+  findAllV1(): string {
+    return 'This action returns all cats for version 1';
+  }
+
+  @Version('2')
+  @Get('cats')
+  findAllV2(): string {
+    return 'This action returns all cats for version 2';
+  }
+}
+```
+
+version也可以是数组, 比如: `['1', '2']`，因为有些特殊路由需要在多个版本间保持一致行为，这样做可以减少重复代码。
+
+更多内容见: [API多版本]( https://docs.nestjs.cn/8/techniques?id=api-%e5%a4%9a%e7%89%88%e6%9c%ac)
+
+### 配置
+
+全局常量配置存放在`src/config`目录下, 分为三种环境（开发环境、生产环境、测试环境），依据环境不同加载不同env文件（不建议创建多环境公用的env文件！！）
+
+使用示例（以development环境为例）： 
+
+1. 在development.env中添加配置：
+
+   ```env
+   APP_PORT=8888
+   ```
+
+2. 在config下创建`app.config.ts`（后续根据不同模块，创建不同的config.ts）
+
+   ```ts
+   import { registerAs } from '@nestjs/config';
+   
+   export default registerAs('app', () => ({
+     port: parseInt(process.env.APP_PORT, 10) || 3000,
+   }));
+   ```
+
+   推荐使用这种"带命名空间"的配置对象, 不仅增强可读性, 也为环境变量划分了模块, 而且由于是ts, 可以为访问环境变量添加逻辑处理（例如本例就为port添加了int类型转换和默认值）。
+
+3. 在`app.controller.ts`中访问变量
+
+   ```ts
+   @Controller()
+   export class AppController {
+     constructor(
+       private configService: ConfigService,
+     ) {}
+   
+     @Get()
+     getHello(): string {
+       console.log(this.configService.get<string>('app.port')); // 读取env变量示例
+     }
+   }
+   ```
+
+   
 
 ### 鉴权
 
@@ -101,7 +206,7 @@ jwt生效时间在src/core/auth/auth.module.ts中配置:
 })
 ```
 
-为登录接口使用管道: `@UseGuards(LocalAuthGuard)`, 其他需要验证token的接口使用管道: `@UseGuards(JwtAuthGuard)`，在此之后可直接获取到jwt中的user信息：
+为登录路由使用管道: `@UseGuards(LocalAuthGuard)`, 其他需要验证token的路由使用管道: `@UseGuards(JwtAuthGuard)`，在此之后可直接获取到jwt中的user信息：
 
 ```ts
 @Post()
@@ -115,9 +220,9 @@ async createPost(
 
 验证token身份之后, 验证用户权限, 权限Role在src/common/enums/role.enum.ts下
 
-首先为接口使用管道: `@UseGuards(RolesGuard) `, 再为接口配置权限`@Roles(Role.ADMIN)`
+首先为路由或控制器使用管道: `@UseGuards(RolesGuard) `, 再为路由或控制器配置权限`@Roles(Role.ADMIN)`
 
-`ps:`在nest中, 不仅可以为接口(端点)设置管道, 也可以为controller、模块、甚至全局设置管道。
+`ps:`在nest中, 不仅可以为路由设置管道, 也可以为controller、模块、甚至全局设置管道。
 
 ### 数据库
 
@@ -171,7 +276,10 @@ sqlserver:
 }
 ```
 
-注意：Typeorm生成的sql语句可能不支持SqlServer2008，因此可能需要使用QueryBuilder来拼接sql。
+注意：
+
+1. Typeorm生成的sql语句可能不支持SqlServer2008，因此可能需要使用QueryBuilder来拼接sql。
+2. 同时使用relations, skip,take可能会出现TypeError: Cannot read property 'databaseName' of undefined", 只需再加一个order即可以解决。
 
 #### 2. 在app.module.ts中读取配置
 
@@ -246,6 +354,23 @@ export class User {
   	role?: Role;
 }
 ```
+
+注意：
+
+CloverAdmin在main.ts中启用了全局验证, 配置如下: 
+
+```ts
+app.useGlobalPipes(
+    new ValidationPipe({
+      disableErrorMessages: false, // 禁用详细错误信息(开启后不会再返回详细的错误信息)
+      whitelist: true, // 自动去除非白名单内的属性(即验证类中没有声明的属性)
+      forbidNonWhitelisted: false, // 开启后, 如果出现非白名单内的属性, 将不再是自动去除而是抛出错误
+      transform: false, // 全局开启转换器(默认关闭, 多数情况是在controller层开启)---开启后, '14' => 14
+    }),
+ ); // 全局启用验证
+```
+
+在设置`whitelist: true`后，前端传递的数据如果没有在entity或dto中设置验证, 那么这个数据将被忽略。
 
 ### 静态服务
 

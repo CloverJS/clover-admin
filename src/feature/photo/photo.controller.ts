@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PhotoService } from './photo.service';
-import { Photo as PhotoEntity } from './entities/photo.entity'; // 可以使用as来为photo指定一个别名
+import { Photo, Photo as PhotoEntity } from './entities/photo.entity'; // 可以使用as来为photo指定一个别名
 import { Result } from 'src/common/interfaces/result.interface';
 
 @Controller('photos')
@@ -29,7 +29,7 @@ export class PhotoController {
   async createPost(
     @Req() req: any,
     @Body() createInput: PhotoEntity,
-  ): Promise<Result> {
+  ): Promise<Result<void>> {
     /**
      * 因为我们在实体中使用了级联,接着在下面为二者建立联系,就仅需要在service中save photo即可, 否则photo和user就需要分别save
      * see: https://github.com/typeorm/typeorm 中的 '使用级联自动保存相关对象'
@@ -44,9 +44,9 @@ export class PhotoController {
    */
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  async findAll(@Req() req: any): Promise<Result> {
+  async findAll(@Req() req: any): Promise<Result<Photo>> {
     const photos = await this.photoService.findAll(req.user.id);
-    return { code: 200, message: '查询成功', data: photos };
+    return { code: 200, message: '查询成功', data: { list: photos } };
   }
 
   /**
@@ -58,7 +58,7 @@ export class PhotoController {
     @Req() req: any,
     @Body('content') updateContent: string,
     @Param('id') id: number,
-  ): Promise<Result> {
+  ): Promise<Result<void>> {
     await this.photoService.updateContent(id, updateContent);
     return { code: 200, message: '更新成功' };
   }
@@ -74,7 +74,7 @@ export class PhotoController {
     @Query('offset') offset: number,
     @Query('limit') limit: number,
     // @Param() params: { title?: string; offset?: number; limit?: number },
-  ): Promise<Result> {
+  ): Promise<Result<Photo>> {
     console.log(req.user.id, title, offset, limit);
     const photos = await this.photoService.findAllPhotosAndLimit(
       req.user.id,
@@ -82,6 +82,6 @@ export class PhotoController {
       offset,
       limit,
     );
-    return { code: 200, message: '查询成功', data: photos };
+    return { code: 200, message: '查询成功', data: { list: photos } };
   }
 }
