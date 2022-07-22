@@ -8,7 +8,7 @@
 
 ## Description
 
-CloverAdmin是一个Nest后台后端解决方案。它借助强大的[Nest](https://github.com/nestjs/nest)和社区快速、轻巧地构建更优雅的Node服务端应用程序。目前已集成权限验证、使用Typeorm的MySql与SqlServer方案、全局常量配置、URI多版本控制、数据验证、文件上传、静态服务等功能。它提供了一个完整的RestFul风格的接口示例。
+CloverAdmin是一个Nest后台后端解决方案。它借助强大的[Nest](https://github.com/nestjs/nest)和社区快速、轻巧地构建更优雅的Node服务端应用程序。目前已集成权限验证、使用Typeorm的MySql与SqlServer方案、全局常量配置、URI多版本控制、数据验证、文件上传、静态服务、日志等功能。它提供了一个完整的RestFul风格的接口示例。
 
 `node：14.19.0`
 `pnpm：6.32.3`
@@ -394,6 +394,96 @@ app.useGlobalPipes(
 文件上传有一个专门的模块, 在src/feature/file下, 此功能基于multer实现, 相关的所有配置均在file.module.ts下。
 
 如果在上传文件同时, 希望一同传递其他参数, 请在src/feature/file/dto中进行设置。
+
+### 日志
+
+CloverAdmin在Nest默认日志系统基础上进行一些扩展（你可以在core/logger模块看到详细代码），并提供了两种日志记录实现，分别是中间件日志监控（只记录请求信息）和拦截器日志监控（记录请求信息和部分响应信息，默认已启用此方案）。
+
+MyLogger模块会在项目根目录下创建logs文件夹，并会将日志输出到logs/info.log和logs/err.log文件中。
+
+要使用MyLogger模块首先需要全局启用MyLogger模块，在app.module.ts中执行导入：
+
+```ts
+@Module({
+    imports: [
+        LoggerModule
+    ]
+})
+```
+
+接着在main.ts中全局启用MyLogger：
+
+```ts
+const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+app.useLogger(new MyLogger());
+```
+
+现在你可以在任何地方注入MyLogger并调用其中的日志方法来输出日志，像这样：
+
+```ts
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  /** 注入日志服务 */
+  constructor(
+    private readonly myLogger: MyLogger,
+  ) {
+    // 设置日志上下文
+    this.myLogger.setContext(LoggerMiddleware.name); 
+  }
+  use(req: Request, res: Response, next: NextFunction) {
+     // 记录请求日志
+    this.myLogger.log(`Request... ${req.url} ${req.method}
+    body: ${JSON.stringify(req.body)}
+    query: ${JSON.stringify(req.query)}
+    user-agent: ${req.headers['user-agent']}`);
+    next();
+  }
+}
+```
+
+这个示例中，我们在中间件中注入了MyLogger，并依据其log方法输出日志。
+
+在每一个controller中注入MyLogger输出请求信息十分繁琐，所以我们借助中间件和拦截器提供了两种记录请求日志的方案：
+
+如果你希望使用中间件日志监控，则需要在app.module.ts中增加如下配置：
+
+```ts
+@Module({...})
+export class AppModule implements NestModule {
+  // ...
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware) // 启用日志中间件
+      // .exclude({ path: 'cats', method: RequestMethod.GET }) // 排除指定路由, 可指定多个规则
+      .forRoutes({ path: '*', method: RequestMethod.ALL }); // 匹配所有路由下的所有请求方法, 参数亦可是多个Controller
+  }
+}
+```
+
+如果你希望使用拦截器日志监控，我们建议你将日志拦截器设为全局拦截器，在main.ts中增加：
+
+```ts
+app.useGlobalInterceptors(new LoggerInterceptor(app.get(MyLogger)));
+```
+
+如果你仅仅希望在控制台输出请求的简单信息，那么仅需直接在main.ts使用函数式日志中间件：
+
+```ts
+app.use(logger);
+```
+
+另外，我们也可以控制Nest默认日志在控制台输出哪些级别的日志，在main.ts中：
+
+```ts
+const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'debug', 'log', 'verbose'], // 输出的日志级别
+  });
+```
+
+
 
 ### TypeORM
 

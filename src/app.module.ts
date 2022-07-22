@@ -14,6 +14,7 @@ import { PhotoModule } from './feature/photo/photo.module';
 import appConfig from './config/app.config';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigEnum } from './config/config.enum';
+import { LoggerModule } from './core/logger/logger.module';
 
 @Module({
   imports: [
@@ -37,9 +38,10 @@ import { ConfigEnum } from './config/config.enum';
       // 配置静态服务目录---访问: http://localhost:3000/client目录内/xxx.png
       rootPath: join(__dirname, '..', 'client'),
     }),
-    UserModule,
+    LoggerModule,
     FileModule,
     AuthModule,
+    UserModule,
     PhotoModule,
   ],
   controllers: [AppController],
