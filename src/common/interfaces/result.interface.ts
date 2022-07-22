@@ -1,10 +1,6 @@
-interface Data<T> {
-  page?: number;
-  totalPage?: number;
-  pageSize?: number;
-  total?: number;
-  hasPrev?: boolean;
-  hasNext?: boolean;
+import { Pagination } from './pagination.interface';
+
+interface Data<T> extends Pagination {
   list: Array<T>;
 }
 interface ErrorMessage {
