@@ -28,7 +28,7 @@ async function bootstrap() {
     }),
   ); // 全局启用验证
   // 全局日志拦截器
-  app.useGlobalInterceptors(new LoggerInterceptor(app.get(MyLogger)));
+  app.useGlobalInterceptors(new LoggerInterceptor(new MyLogger())); // 因为MyLogger指定了瞬态作用域, 所以使用new MyLogger()代替app.get(MyLogger)
   // 如果遇到请求实体太大的问题, 可揭开下面的注释
   // app.use(json({ limit: '50mb' }));
   // app.use(urlencoded({ limit: '50mb', extended: true }));

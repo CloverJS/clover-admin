@@ -3,6 +3,9 @@
 /node_modules
 client/fileUpload
 
+# store
+.pnpm-store
+
 # Logs
 logs
 *.log
