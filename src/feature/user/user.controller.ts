@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -51,6 +52,8 @@ export class UserController {
   /**
    * 查询指定用户
    */
+  @UseInterceptors(ClassSerializerInterceptor) // 排除指定字段(会排除UserEntity中被Exclude装饰器修饰的字段)
+  // @SerializeOptions({ excludePrefixes: ['_'] }) // ClassSerializerInterceptor的默认行为可以被覆盖, 比如此处将排除以_开头的字段
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Result<User>> {
     const user = await this.userService.findOne(id);
