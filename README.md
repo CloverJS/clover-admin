@@ -370,6 +370,58 @@ app.useGlobalPipes(
 
 在设置`whitelist: true`后，前端传递的数据如果没有在entity或dto中设置验证, 那么这个数据将被忽略。
 
+
+### 序列化
+对接口出入参作转换
+官方文档: 
+https://docs.nestjs.cn/9/techniques?id=%e5%ba%8f%e5%88%97%e5%8c%96%ef%bc%88serialization%ef%bc%89
+
+https://github.com/typestack/class-transformer
+#### 排除属性
+* 在Entity中为要排除的属性添加注解`@Exclde()`
+  ```ts
+  import { Exclude } from 'class-transformer';
+  export class UserEntity {
+    @Exclude()
+    password: string;
+  }
+  ```
+* 在controller中使用`@UseInterceptors(ClassSerializerInterceptor)`
+  ```ts
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get()
+  findOne(): UserEntity{}
+  ```
+#### 公开属性
+这类似于计算属性(或者说, getter函数)
+* 使用注解`@Expose()`
+  ```ts
+  @Expose()
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+  ```
+#### 转换
+对数据进行转换, 常常需要为接口出入参做数据转换
+* 使用注解`@Transform()`
+  ```ts
+  // 比如在查询时希望展示role的name而不是整个对象
+  @Transform(role => role.name)
+  role: RoleEntity;
+  ```
+#### 传递选项
+ClassSerializerInterceptor的默认行为可以被覆盖,只需要传入一个`options`对象
+```ts
+// 自动排除了所有以_前缀开头的属性
+@SerializeOptions({
+  excludePrefixes: ['_'],
+})
+@Get()
+findOne(): UserEntity {
+  return {};
+}
+```
+
 ### 静态服务
 
 在app.module.ts中添加配置:
@@ -394,6 +446,46 @@ app.useGlobalPipes(
 文件上传有一个专门的模块, 在src/feature/file下, 此功能基于multer实现, 相关的所有配置均在file.module.ts下。
 
 如果在上传文件同时, 希望一同传递其他参数, 请在src/feature/file/dto中进行设置。
+
+
+### 定时任务
+官方文档: https://docs.nestjs.cn/9/techniques?id=%e5%ae%9a%e6%97%b6%e4%bb%bb%e5%8a%a1
+
+定时任务模块位于: `src/core/task`
+
+创建一个定时任务需要使用注解`@Cron()`
+
+`@Cron('45 * * * * *')`代表每分钟执行一次,在第45秒执行, 参数遵从如下规则: 
+```
+* * * * * *
+| | | | | |
+| | | | | day of week
+| | | | month
+| | | day of month
+| | hour
+| minute
+second (optional)
+
+```
+一些常用的计时模式示例如下:
+
+`* * * * * *` 每秒
+
+`45 * * * * *` 每分钟第 45 秒
+
+`_ 10 _ * * *` 每小时，从第 10 分钟开始
+
+`0 _/30 9-17 _ * *` 上午 9 点到下午 5 点之间每 30 分钟
+
+`0 30 11 * * 1-5` 周一至周五上午 11:30
+
+`@nestjs/schedule`包的内置CronExpression对象也提供一些常用枚举, 如`CronExpression.EVERY_30_SECONDS` 每分钟执行一次,在第30秒执行
+
+使用注解`@Interval(10000)`声明像js中setInterval()一样的任务
+
+使用注解`@Timeout(5000)`声明延时任务, 就像js中
+setTimeout()一样
+
 
 ### 日志
 
