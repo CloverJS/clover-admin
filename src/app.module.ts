@@ -31,16 +31,7 @@ import { LoggerModule } from './core/logger/logger.module';
      *  - 使用mssql如果遇到项目启动表未创建, 可以设置为true, 在表创建后再设为false
      * 设置autoLoadEntities为true即可自动载入实体---每个通过forFeature()注册的实体都会自动添加到配置对象的entities数组中
      */
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: '119.45.102.83',
-      port: 3306,
-      username: 'root',
-      password: 'wzc520pyf',
-      database: 'nest_test',
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
+    TypeOrmModule.forRoot(),
     ServeStaticModule.forRoot({
       // 配置静态服务目录---访问: http://localhost:3000/client目录内/xxx.png
       rootPath: join(__dirname, '..', 'client'),
