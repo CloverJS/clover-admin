@@ -9,6 +9,7 @@ specifiers:
   '@nestjs/mapped-types': ^1.0.1
   '@nestjs/passport': ^8.2.1
   '@nestjs/platform-express': ^8.0.0
+  '@nestjs/schedule': ^2.1.0
   '@nestjs/schematics': ^8.0.0
   '@nestjs/serve-static': ^2.2.2
   '@nestjs/testing': ^8.0.0
@@ -57,6 +58,7 @@ dependencies:
   '@nestjs/mapped-types': registry.npmmirror.com/@nestjs/mapped-types/1.0.1_ljefuz3wxtsl6oghlkx5pszvaq
   '@nestjs/passport': registry.npmmirror.com/@nestjs/passport/8.2.1_tys52mabdspwpuru4mnhbd7smy
   '@nestjs/platform-express': registry.npmmirror.com/@nestjs/platform-express/8.4.4_u6bxr3c7htwmhq2t5wi3k6ht4y
+  '@nestjs/schedule': 2.1.0_ri7uarpfhib2ateqzcw7uno7zy
   '@nestjs/serve-static': registry.npmmirror.com/@nestjs/serve-static/2.2.2_u6bxr3c7htwmhq2t5wi3k6ht4y
   '@nestjs/typeorm': registry.npmmirror.com/@nestjs/typeorm/8.0.3_s6kf2wxaqx7c7ghapepprqoxna
   class-transformer: registry.npmmirror.com/class-transformer/0.5.1
@@ -114,6 +116,20 @@ packages:
       '@babel/helper-validator-identifier': 7.16.7
       to-fast-properties: 2.0.0
     dev: true
+
+  /@nestjs/schedule/2.1.0_ri7uarpfhib2ateqzcw7uno7zy:
+    resolution: {integrity: sha512-4Xaw56WiW3VsxEPPnj/iDtfjcO+sUZyYAeRxD0gnF5havncxjAnv52Iw7UH3DuzzUA784xPGgGje3Fq0Gu925g==}
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0
+      '@nestjs/core': ^7.0.0 || ^8.0.0 || ^9.0.0
+      reflect-metadata: ^0.1.12
+    dependencies:
+      '@nestjs/common': registry.npmmirror.com/@nestjs/common/8.4.4_kgmvgmqc4iohdboj3f7yqhrie4
+      '@nestjs/core': registry.npmmirror.com/@nestjs/core/8.4.4_wy6cne2gpevj2v6pvodnemcq2i
+      cron: 2.0.0
+      reflect-metadata: registry.npmmirror.com/reflect-metadata/0.1.13
+      uuid: 8.3.2
+    dev: false
 
   /@types/eslint-scope/3.7.3:
     resolution: {integrity: sha512-PB3ldyrcnAicT35TWPs5IcwKD8S333HMaa2VVv4+wdvebJkjWuW/xESoB8IwRcog8HYVYamb1g/R31Qv5Bx03g==}
@@ -306,6 +322,12 @@ packages:
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
+  /cron/2.0.0:
+    resolution: {integrity: sha512-RPeRunBCFr/WEo7WLp8Jnm45F/ziGJiHVvVQEBSDTSGu6uHW49b2FOP2O14DcXlGJRLhwE7TIoDzHHK4KmlL6g==}
+    dependencies:
+      luxon: 1.28.0
+    dev: false
+
   /electron-to-chromium/1.4.129:
     resolution: {integrity: sha512-GgtN6bsDtHdtXJtlMYZWGB/uOyjZWjmRDumXTas7dGBaB9zUyCjzHet1DY2KhyHN8R0GLbzZWqm4efeddqqyRQ==}
 
@@ -397,6 +419,10 @@ packages:
 
   /lodash.sortby/4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
+
+  /luxon/1.28.0:
+    resolution: {integrity: sha512-TfTiyvZhwBYM/7QdAVDh+7dBTBA29v4ik0Ce9zda3Mnf8on1S5KJI8P2jKFZ8+5C0jhmr0KwJEO/Wdpm0VeWJQ==}
+    dev: false
 
   /merge-stream/2.0.0:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
@@ -548,6 +574,11 @@ packages:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
     dependencies:
       punycode: 2.1.1
+
+  /uuid/8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+    dev: false
 
   /watchpack/2.3.1:
     resolution: {integrity: sha512-x0t0JuydIo8qCNctdDrn1OzH/qDzk2+rdCOC3YzumZ42fiMqmQ7T3xQurykYMhYfHaPHTp4ZxAx2NfUo1K6QaA==}
@@ -789,7 +820,7 @@ packages:
       tough-cookie: registry.npmmirror.com/tough-cookie/4.0.0
       tslib: registry.npmmirror.com/tslib/2.4.0
       tunnel: registry.npmmirror.com/tunnel/0.0.6
-      uuid: registry.npmmirror.com/uuid/8.3.2
+      uuid: 8.3.2
       xml2js: registry.npmmirror.com/xml2js/0.4.23
     transitivePeerDependencies:
       - encoding
@@ -831,7 +862,7 @@ packages:
       http-proxy-agent: registry.npmmirror.com/http-proxy-agent/4.0.1
       https-proxy-agent: registry.npmmirror.com/https-proxy-agent/5.0.1
       tslib: registry.npmmirror.com/tslib/2.4.0
-      uuid: registry.npmmirror.com/uuid/8.3.2
+      uuid: 8.3.2
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -877,7 +908,7 @@ packages:
       open: registry.npmmirror.com/open/8.4.0
       stoppable: registry.npmmirror.com/stoppable/1.1.0
       tslib: registry.npmmirror.com/tslib/2.4.0
-      uuid: registry.npmmirror.com/uuid/8.3.2
+      uuid: 8.3.2
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -947,7 +978,7 @@ packages:
       axios: registry.npmmirror.com/axios/0.21.4_debug@4.3.4
       https-proxy-agent: registry.npmmirror.com/https-proxy-agent/5.0.1
       jsonwebtoken: registry.npmmirror.com/jsonwebtoken/8.5.1
-      uuid: registry.npmmirror.com/uuid/8.3.2
+      uuid: 8.3.2
     transitivePeerDependencies:
       - debug
       - supports-color

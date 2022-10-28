@@ -15,6 +15,8 @@ import appConfig from './config/app.config';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigEnum } from './config/config.enum';
 import { LoggerModule } from './core/logger/logger.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './core/task/task.module';
 
 @Module({
   imports: [
@@ -36,11 +38,14 @@ import { LoggerModule } from './core/logger/logger.module';
       // 配置静态服务目录---访问: http://localhost:3000/client目录内/xxx.png
       rootPath: join(__dirname, '..', 'client'),
     }),
+    /** 初始化定时任务调度器 */
+    ScheduleModule.forRoot(),
     LoggerModule,
     FileModule,
     AuthModule,
     UserModule,
     PhotoModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [
