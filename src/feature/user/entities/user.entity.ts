@@ -6,13 +6,8 @@ import { IsMobilePhone, IsNotEmpty } from 'class-validator';
 import { ActionWithUser } from 'src/common/entities/action-with-user.entity';
 import { Role } from 'src/common/enums/role.enum';
 import { Photo } from 'src/feature/photo/entities/photo.entity';
-import {
-  Column,
-  Entity,
-  Generated,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, Generated, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
 
 @Entity({
   name: 'user', // 数据库表名, 默认为类名
@@ -76,6 +71,7 @@ export class User {
   })
   // 值校验: 是否不为空
   @IsNotEmpty()
+  @Exclude() // 使用class-transformer的@Exclude()装饰器来排除此字段
   password: string;
 
   //TODO mysql支持枚举
@@ -84,6 +80,7 @@ export class User {
     enum: Role,
     default: Role.STUDENT,
   })
+  // @Transform(role => role.name) // 如果Role是对象而查询时仅仅希望获取到Role.name, 可使用class-transformer的@Transform()装饰器来转换此字段
   role: Role;
 
   //TODO mssql不支持枚举
@@ -107,4 +104,10 @@ export class User {
    */
   @OneToMany((type) => Photo, (photo) => photo.user)
   photos: Array<Photo>;
+
+  // 使用class-transformer的@Expose()装饰器来暴露此字段(这类似于计算属性)
+  @Expose()
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
 }
