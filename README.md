@@ -72,7 +72,7 @@ Nest路由由如下几部分组成：
 仅需在main.ts中添加如下配置:
 
 ```ts
-app.setGlobalPrefix('api'); // 全局路由前缀
+app.setGlobalPrefix('clover-api'); // 全局路由前缀
 ```
 
 ### URI版本控制
@@ -378,7 +378,7 @@ https://docs.nestjs.cn/9/techniques?id=%e5%ba%8f%e5%88%97%e5%8c%96%ef%bc%88seria
 
 https://github.com/typestack/class-transformer
 #### 排除属性
-* 在Entity中为要排除的属性添加注解`@Exclde()`
+* 在Entity中为要排除的属性添加注解`@Exclude()`
   ```ts
   import { Exclude } from 'class-transformer';
   export class UserEntity {
