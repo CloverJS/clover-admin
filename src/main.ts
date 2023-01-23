@@ -12,7 +12,7 @@ async function bootstrap() {
     cors: true, // 跨域
   });
   app.useLogger(new MyLogger()); // 因为MyLogger指定了瞬态作用域, 所以使用new MyLogger()代替app.get(MyLogger)
-  app.setGlobalPrefix('clover-api'); // 全局路由前缀
+  app.setGlobalPrefix('api'); // 全局路由前缀
   app.enableVersioning({
     // URI版本控制
     type: VersioningType.URI,
