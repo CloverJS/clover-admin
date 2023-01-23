@@ -17,13 +17,14 @@ import { ConfigEnum } from './config/config.enum';
 import { LoggerModule } from './core/logger/logger.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './core/task/task.module';
+import ossConfig from './config/oss.config';
 
 @Module({
   imports: [
     /** 导入config模块 */
     ConfigModule.forRoot({
       envFilePath: `./src/config/${ConfigEnum[process.env?.NODE_ENV ?? 'development']}.env`, // 自定义env文件路径
-      load: [appConfig], // 自定义配置文件
+      load: [appConfig, ossConfig], // 自定义配置文件
       isGlobal: true, // 设为全局模块
     }),
     /**
