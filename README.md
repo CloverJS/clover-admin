@@ -148,7 +148,22 @@ version也可以是数组, 比如: `['1', '2']`，因为有些特殊路由需要
 
    推荐使用这种"带命名空间"的配置对象, 不仅增强可读性, 也为环境变量划分了模块, 而且由于是ts, 可以为访问环境变量添加逻辑处理（例如本例就为port添加了int类型转换和默认值）。
 
-3. 在`app.controller.ts`中访问变量
+3. 在`app.module.ts`中引入appConfig:
+  ```ts
+  import appConfig from './config/app.config';
+  @Module({
+    imports: [
+      /** 导入config模块 */
+      ConfigModule.forRoot({
+        envFilePath: `./src/config/${ConfigEnum[process.env?.NODE_ENV ?? 'development']}.env`, // 自定义env文件路径
+        load: [appConfig], // 自定义配置文件
+        isGlobal: true, // 设为全局模块
+      }),
+    ]
+  })
+  ```
+
+4. 在`app.controller.ts`中访问变量
 
    ```ts
    @Controller()
